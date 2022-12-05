@@ -2,7 +2,6 @@ package com.goit.feature;
 
 import com.goit.feature.util.TimeZoneUtil;
 
-import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -11,6 +10,7 @@ import java.io.IOException;
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 
 @WebServlet(value = "/time")
 public class TimeServlet extends HttpServlet {
@@ -20,23 +20,16 @@ public class TimeServlet extends HttpServlet {
 
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 
         ZoneId zid = ZoneId.of(timeZoneUtil.parseTimeZone(req));
         Clock clock = Clock.system(zid);
-        LocalDateTime localDateTime = LocalDateTime.now(clock);
-        initTime = localDateTime.toString().replace('T', ' ').substring(0, 19) + " " + zid;
+        initTime = LocalDateTime.now(clock).format(DateTimeFormatter.ofPattern(
+                "yyyy-MM-dd hh:mm:ss " + zid
+        ));
 
         resp.setContentType("text/html; charset=utf-8");
         resp.getWriter().write("<h1>" + initTime + "</h1>");
         resp.getWriter().close();
-    }
-
-    private String parseTimeZone(HttpServletRequest request) {
-        if (request.getParameterMap().containsKey("timezone")) {
-            return (request.getParameter("timezone").replace(" ", "+").length() < 1) ?
-                    "UTC" : request.getParameter("timezone").replace(" ", "+").toUpperCase();
-        }
-        return "UTC";
     }
 }
