@@ -25,8 +25,8 @@ public class TimeServlet extends HttpServlet {
         ZoneId zid = ZoneId.of(timeZoneUtil.parseTimeZone(req));
         Clock clock = Clock.system(zid);
         initTime = LocalDateTime.now(clock).format(DateTimeFormatter.ofPattern(
-                "yyyy-MM-dd hh:mm:ss " + zid
-        ));
+                "yyyy-MM-dd hh:mm:ss "
+        )) + zid;
 
         resp.setContentType("text/html; charset=utf-8");
         resp.getWriter().write("<h1>" + initTime + "</h1>");
